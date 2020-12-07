@@ -23,24 +23,30 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::get('/cupon', function () {
+    $folio = strval(round(microtime(true)*1000));
+    $generador = new BarcodeGeneratorJPG();
+    $path_to_save= public_path() . "\\barcodes\\" . $folio . ".jpg";
 
-    $saved_path="\barcode.jpg";
+    file_put_contents($path_to_save, $generador->getBarcode($folio, $generador::TYPE_INTERLEAVED_2_5, 3, 75));
 
-    $pdf = PDF::loadView('cupon',compact("saved_path"));
 
-    return $pdf->stream();
+    $saved_path= $folio . ".jpg";
+    $lineas = ["hola", "te acabas", "de ganar", "unos", "besotes"];
+    // $pdf = PDF::loadView('cupon',compact('saved_path', 'lineas', 'folio'));
+    // $pdf->setPaper("letter", "portrait");
+    // return $pdf->stream('cupon.pdf');
 
-   //return view("cupon", compact('saved_path'));
+    return view("cupon", compact('saved_path', 'lineas', 'folio'));
 });
 Route::post('/cupon', function (Request $req) {
 
 
     // echo($req->getContent());
-    $folio = strval(round(microtime(true)*1000));
 
-    $generador = new BarcodeGeneratorJPG();
-    $saved_path= public_path() . "\barcode.jpg";
-    echo file_put_contents($saved_path, $generador->getBarcode($folio, $generador::TYPE_INTERLEAVED_2_5, 3, 100));
+
+
+
+
 
 
 });
