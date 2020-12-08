@@ -13,10 +13,35 @@
         justify-content: center;
         align-items: center;
     } */
+    @font-face {
+    font-family: 'Your custom font name';
+    src: url("../../storage/fonts/Roboto-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+    }
+    body{
+        font-family: "Roboto-Regular"
+    }
     img{
         display: block;
-        max-width: 50%;
+        max-width: 100%;
         height: auto;
+    }
+    .centrar-img{
+        margin-top: 2%;
+        margin-left: 7%
+
+    }
+    .center-card{
+        display: block;
+        margin-left: 20%;
+        margin-right: 20%;
+
+    }
+    .center-text{
+
+       text-align: center;
+
     }
 </style>
 
@@ -25,39 +50,33 @@
         if ( isset($pdf) ) {
             $pdf->page_script('
                 $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
-                $pdf->text(480, 800, "Página $PAGE_NUM de $PAGE_COUNT", $font, 11);
+                $pdf->text(270, 750, "Página $PAGE_NUM de $PAGE_COUNT", $font, 11);
             ');
         }
     </script>
-<div class="container mb-4" id="ticket">
 
-        <div class="col-6">
+<div class="container center-card" id="ticket">
+        <div class="col-6 justify-center">
             <div class="card">
-
                     <img id="imgHeader" src="{{asset('assets/cupon-header.jpg')}}" alt="Cabecera con el logotipo de chedraui" class="card-img-top img-fluid"/>
-
-
-
-                <div class="card-body">
+                <div class="card-body  ">
                     @foreach ($lineas as $linea)
-                    <h5 class="card-title font-weight-bold text-center">{{$linea}}</h5>
+                    <h5 class="card-title center-text font-weight-bold">{{$linea}}</h5>
                     @endforeach
-
-
-
                 </div>
-                <img src="{{asset('assets/cupon-cinta.jpg')}}" alt="cinta promcional de chedraui" class="img-fluid"/>
+                <img src="{{asset('assets/cupon-cinta.jpg')}}" alt="cinta promcional de chedraui" class="img-fluid "/>
                 <br />
-            <img src="{{asset('barcodes/' . $saved_path)}}" alt="barcode" class="align-self-center img-fluid">
-            <p class="text-center">{{$folio}}</p>
+
+        <img src="{{asset('barcodes/' . $saved_path)}}" alt="barcode" class="img-fluid centrar-img">
+            <p class="center-text">{{$folio_local}}</p>
 
                     <img src="{{asset('assets/cupon-footer.jpg')}}" class="card-img-bottom img-fluid"  />
-
-
             </div>
         </div>
 
+
 </div>
+
 
 
 </body>

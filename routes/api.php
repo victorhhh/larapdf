@@ -23,30 +23,49 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::get('/cupon', function () {
-    $folio = strval(round(microtime(true)*1000));
+    $folio_local = strval(round(microtime(true)*1000));
+    $folio = "75" . $folio_local;
     $generador = new BarcodeGeneratorJPG();
     $path_to_save= public_path() . "\\barcodes\\" . $folio . ".jpg";
 
-    file_put_contents($path_to_save, $generador->getBarcode($folio, $generador::TYPE_INTERLEAVED_2_5, 3, 75));
+    file_put_contents($path_to_save, $generador->getBarcode("47160743887577400000000000", $generador::TYPE_INTERLEAVED_2_5, 2, 75));
 
 
     $saved_path= $folio . ".jpg";
-    $lineas = ["hola", "te acabas", "de ganar", "unos", "besotes"];
-    // $pdf = PDF::loadView('cupon',compact('saved_path', 'lineas', 'folio'));
-    // $pdf->setPaper("letter", "portrait");
-    // return $pdf->stream('cupon.pdf');
+    $lineas = ["hola", "te acabas", "de ganar", "unos", "cupones"];
+    $pdf = PDF::loadView('cupon',compact('saved_path', 'lineas', 'folio_local'));
+    $pdf->setPaper("letter", "portrait");
+    // $pdf->save(public_path('files\\'));
 
-    return view("cupon", compact('saved_path', 'lineas', 'folio'));
+    return $pdf->stream('cupon.pdf');
+
+    // return view("cupon", compact('saved_path', 'lineas', 'folio'));
 });
 Route::post('/cupon', function (Request $req) {
 
+//generate barcode
+    $info = json_decode($req->getContent());
 
-    // echo($req->getContent());
+    $generador = new BarcodeGeneratorJPG();
+    $path_to_save= public_path() . "\\barcodes\\" . $info->folio . ".jpg";
+    file_put_contents($path_to_save, $generador->getBarcode($info->folio, $generador::TYPE_INTERLEAVED_2_5, 2, 75));
+
+//generate pdf
+    $folio_local = $info->folio;
+    $saved_path= $info->folio . ".jpg";
+    $lineas = $info->lineas;
+    $pdf = PDF::loadView('cupon',compact('saved_path', 'lineas', 'folio_local'));
+    $pdf->setPaper("letter", "portrait");
+    $cupon_file = $info->folio . ".pdf";
+    $pdf->save(public_path('files\\' . $cupon_file));
+    $returned_path =  public_path('files\\' . $cupon_file);
+
+    $respuesta = array(
+        "returned_path"=> $returned_path,
+        "file_name"=> $cupon_file
+    );
 
 
-
-
-
-
+    return response()->json($respuesta);
 
 });
